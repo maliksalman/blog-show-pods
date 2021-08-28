@@ -1,5 +1,6 @@
 package com.example.k8spods;
 
+import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.util.ClientBuilder;
 import io.kubernetes.client.util.KubeConfig;
@@ -17,11 +18,16 @@ import java.io.IOException;
 public class ApiClientConfig {
 
     @Bean
-    public ApiClient localApiClient() throws IOException {
+    public ApiClient externalApiClient() throws IOException {
         KubeConfig kubeConfig = KubeConfig.loadKubeConfig(new FileReader(getConfigFile()));
         return ClientBuilder
                 .kubeconfig(kubeConfig)
                 .build();
+    }
+
+    @Bean
+    public SharedInformerFactory sharedInformerFactory(ApiClient apiClient) {
+        return new SharedInformerFactory(apiClient);
     }
 
     private File getConfigFile() {
