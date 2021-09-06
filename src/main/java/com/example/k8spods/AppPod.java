@@ -11,5 +11,6 @@ public class AppPod {
     String app;
     String image;
     String name;
+    String team;
     OffsetDateTime startTime;
 }
