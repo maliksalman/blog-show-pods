@@ -20,7 +20,7 @@ public class ApiClientConfig {
     @Bean
     public ApiClient externalApiClient() throws IOException {
         KubeConfig kubeConfig = KubeConfig.loadKubeConfig(new FileReader(getConfigFile()));
-        log.info("current context: {}", kubeConfig.getCurrentContext());
+        log.info("Current Context: Name={}", kubeConfig.getCurrentContext());
         return ClientBuilder
                 .kubeconfig(kubeConfig)
                 .build();

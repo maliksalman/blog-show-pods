@@ -5,6 +5,8 @@ import lombok.Value;
 
 @Value
 @Builder
-public class AppDeployment {
-    String app, team;
+public class TeamApp {
+    String name;
+    String team;
+    int readyInstances;
 }
