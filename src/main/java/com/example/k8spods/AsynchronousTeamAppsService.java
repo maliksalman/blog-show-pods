@@ -27,9 +27,14 @@ public class AsynchronousTeamAppsService implements TeamAppsService {
     private final Indexer<V1Deployment> indexer;
     private final SharedIndexInformer<V1Deployment> informer;
 
-    public AsynchronousTeamAppsService(ApiClient client, SharedInformerFactory informerFactory, @Value("${namespace}") String namespace) {
+    public AsynchronousTeamAppsService(
+            ApiClient client,
+            SharedInformerFactory informerFactory,
+            @Value("${namespace}") String namespace) {
+
         log.info("Creating asynchronous team-app service, Namespace={}", namespace);
         AppsV1Api appsV1Api = new AppsV1Api(client);
+
         informer = informerFactory.sharedIndexInformerFor(params -> appsV1Api.listNamespacedDeploymentCall(
                         namespace,
                         null,
@@ -58,14 +63,6 @@ public class AsynchronousTeamAppsService implements TeamAppsService {
         informer.stop();
     }
 
-    private TeamApp toTeamApp(V1Deployment v1Deployment) {
-        return TeamApp.builder()
-                .name(v1Deployment.getMetadata().getLabels().get(APP_LABEL))
-                .team(v1Deployment.getMetadata().getLabels().get(TEAM_LABEL))
-                .readyInstances(v1Deployment.getStatus().getReadyReplicas())
-                .build();
-    }
-
     public Set<String> listTeams() {
         return indexer.list()
                 .stream()
@@ -77,8 +74,16 @@ public class AsynchronousTeamAppsService implements TeamAppsService {
     public List<TeamApp> listTeamApps(String team) {
         return indexer.list()
                 .stream()
-                .filter(deployment -> deployment.getMetadata().getLabels().get("team").equals(team))
+                .filter(deployment -> team.equals(deployment.getMetadata().getLabels().get("team")))
                 .map(this::toTeamApp)
                 .collect(Collectors.toList());
+    }
+
+    private TeamApp toTeamApp(V1Deployment v1Deployment) {
+        return TeamApp.builder()
+                .name(v1Deployment.getMetadata().getLabels().get(APP_LABEL))
+                .team(v1Deployment.getMetadata().getLabels().get(TEAM_LABEL))
+                .readyInstances(v1Deployment.getStatus().getReadyReplicas())
+                .build();
     }
 }

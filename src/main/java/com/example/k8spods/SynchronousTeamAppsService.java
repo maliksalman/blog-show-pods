@@ -21,18 +21,13 @@ public class SynchronousTeamAppsService implements TeamAppsService {
     private final AppsV1Api appsV1Api;
     private final String namespace;
 
-    public SynchronousTeamAppsService(ApiClient client, @Value("${namespace}") String namespace) {
+    public SynchronousTeamAppsService(
+            ApiClient client,
+            @Value("${namespace}") String namespace) {
+
         log.info("Creating synchronous team-app service, Namespace={}", namespace);
         this.appsV1Api = new AppsV1Api(client);
         this.namespace = namespace;
-    }
-
-    private TeamApp toTeamApp(V1Deployment v1Deployment) {
-        return TeamApp.builder()
-                .name(v1Deployment.getMetadata().getLabels().get(APP_LABEL))
-                .team(v1Deployment.getMetadata().getLabels().get(TEAM_LABEL))
-                .readyInstances(v1Deployment.getStatus().getReadyReplicas())
-                .build();
     }
 
     @SneakyThrows
@@ -73,5 +68,13 @@ public class SynchronousTeamAppsService implements TeamAppsService {
                 .stream()
                 .map(this::toTeamApp)
                 .collect(Collectors.toList());
+    }
+
+    private TeamApp toTeamApp(V1Deployment v1Deployment) {
+        return TeamApp.builder()
+                .name(v1Deployment.getMetadata().getLabels().get(APP_LABEL))
+                .team(v1Deployment.getMetadata().getLabels().get(TEAM_LABEL))
+                .readyInstances(v1Deployment.getStatus().getReadyReplicas())
+                .build();
     }
 }
