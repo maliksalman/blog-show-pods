@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.File;
 import java.io.FileReader;
@@ -18,6 +19,16 @@ import java.io.IOException;
 public class ApiClientConfig {
 
     @Bean
+    @Profile("cloud")
+    public ApiClient internalApiClient() throws IOException {
+        log.info("Using cluster client");
+        return ClientBuilder
+                .cluster()
+                .build();
+    }
+
+    @Bean
+    @Profile("!cloud")
     public ApiClient externalApiClient() throws IOException {
         KubeConfig kubeConfig = KubeConfig.loadKubeConfig(new FileReader(getConfigFile()));
         log.info("Current Context: Name={}", kubeConfig.getCurrentContext());
