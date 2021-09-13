@@ -1,4 +1,4 @@
-package com.example.k8spods;
+package com.example.k8s;
 
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;

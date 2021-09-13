@@ -1,4 +1,4 @@
-package com.example.k8spods;
+package com.example.k8s;
 
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.AppsV1Api;

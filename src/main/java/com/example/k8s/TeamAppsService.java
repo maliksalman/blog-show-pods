@@ -1,4 +1,4 @@
-package com.example.k8spods;
+package com.example.k8s;
 
 import java.util.List;
 import java.util.Set;
